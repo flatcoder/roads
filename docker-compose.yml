@@ -1,0 +1,29 @@
+# Not to be confused with the Python version, specified in Dockerfile ;)
+version: '3.6'
+
+services:
+  db:
+    restart: always
+    image: postgres
+    environment:
+      - POSTGRES_USER=${D_USER}
+      - POSTGRES_PASSWORD=${D_PASSWORD}
+      - POSTGRES_DB=${D_DB}
+    #volumes:
+    #  - ./pg-data:/var/lib/postgresql/data
+    ports:
+      - "5532:5432"
+  web:
+    restart: always
+    build: .
+    environment:
+      - DATABASE_URL=${D_DATABASE_URL}
+    # command = run on start-up, entrypoint = exclusive...
+    entrypoint: ["./launch_server.sh"]
+    #volumes:
+    #  - .:/code
+    ports:
+      - "5101:5000"
+    depends_on:
+      - db
+

@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.inspection import inspect
+from sqlalchemy_utils import aggregated
 
 db = SQLAlchemy()
 
@@ -43,9 +44,13 @@ class Region(ModelABC, db.Model):
 
 class Authority(ModelABC, db.Model):
     __tablename__ = 'authorities'
+
+    __table_args__ = (
+        db.UniqueConstraint('name', 'region', name='unique_authority_region_combo'),
+    )
+
     name = db.Column(db.String(80), nullable=False)
     region = db.Column(db.Integer, db.ForeignKey('regions.id'))
-# how.... UNIQUE(name,region)
 
     @classmethod
     def find_or_create(cls, name, region):
@@ -97,9 +102,12 @@ class Road(ModelABC, db.Model):
 class Junction(ModelABC, db.Model):
     __tablename__ = 'junctions'
 
+    __table_args__ = (
+        db.UniqueConstraint('road', 'name', name='unique_road_name_combo'),
+    )
+
     name = db.Column(db.String(80), nullable=False)
     road = db.Column(db.Integer, db.ForeignKey('roads.id'))
-# UNIQUE(road,name)
 
     @classmethod
     def find_or_create(cls, name, road):
@@ -127,7 +135,7 @@ class JunctionLink(ModelABC, db.Model):
         rec = cls.query.filter_by(start_junction=start_junction, end_junction=end_junction,
                                   road_category=road_category, local_authority=local_authority).first()
         if rec == None:
-            print("Creating Junction Link '"+str(start_junction)+"' to '"+str(end_junction)+".")
+            print("Creating Junction Link '"+str(start_junction)+"' to '"+str(end_junction)+"'.")
             newlink = JunctionLink(start_junction=start_junction, end_junction=end_junction,
                                    road_category=road_category, local_authority=local_authority)
             db.session.add(newlink)
@@ -139,8 +147,13 @@ class JunctionLink(ModelABC, db.Model):
 class TrafficCount(ModelABC, db.Model):
     __tablename__ = 'traffic_counts'
 
-    cp = db.Column(db.Integer, unique=True, nullable=False)
+    __table_args__ = (
+        db.UniqueConstraint('cp', 'year', name='cp_year_combo'),
+    )
+
+    cp = db.Column(db.Integer, nullable=False)
     link = db.Column(db.Integer, db.ForeignKey('links.id'))
+
     year = db.Column(db.Integer, nullable=False)
     estimated = db.Column(db.Boolean, nullable=False, default=False)
     northing = db.Column(db.Integer, nullable=False)
@@ -160,3 +173,41 @@ class TrafficCount(ModelABC, db.Model):
     v4_artic_hgv = db.Column(db.Integer, nullable=False, default=0)
     v5_artic_hgv = db.Column(db.Integer, nullable=False, default=0)
     v6_artic_hgv = db.Column(db.Integer, nullable=False, default=0)
+
+    total_hgv = db.Column(db.Integer, nullable=False, default=0)
+    total_all = db.Column(db.Integer, nullable=False, default=0)
+
+    @classmethod
+    def create_from_dict(cls, newcount):
+        total_hgv = newcount["v2_rigid_hgv"]+newcount["v3_rigid_hgv"]+newcount["v4_rigid_hgv"]+ \
+                    newcount["v4_artic_hgv"]+newcount["v5_artic_hgv"]+newcount["v6_artic_hgv"]
+        total_all = total_hgv+newcount["pedal_cycles"]+newcount["motor_cycles"]+ \
+                    newcount["cars_taxis"]+newcount["buses_coaches"]+newcount["light_goods"]
+
+        newco = TrafficCount(
+                        cp=newcount["cp"],
+                        link=newcount["link"],
+                        year=newcount["year"],
+                        estimated=newcount["estimated"],
+                        easting=newcount["easting"],northing=newcount["northing"],
+                        length_km=newcount["length_km"],
+                        pedal_cycles=newcount["pedal_cycles"],
+                        motor_cycles=newcount["motor_cycles"],
+                        cars_taxis=newcount["cars_taxis"],
+                        buses_coaches=newcount["buses_coaches"],
+                        light_goods=newcount["light_goods"],
+                        v2_rigid_hgv=newcount["v2_rigid_hgv"],
+                        v3_rigid_hgv=newcount["v3_rigid_hgv"],
+                        v4_rigid_hgv=newcount["v4_rigid_hgv"],
+                        v4_artic_hgv=newcount["v4_artic_hgv"],
+                        v5_artic_hgv=newcount["v5_artic_hgv"],
+                        v6_artic_hgv=newcount["v6_artic_hgv"],
+                        total_hgv=total_hgv,
+                        total_all=total_all
+                    )
+        try:
+            db.session.add(newco)
+            db.session.commit()
+            return newco
+        except:
+            return None

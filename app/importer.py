@@ -1,5 +1,5 @@
 from flask_script import Command, Option
-from app.models import Region, Authority, Road, RoadCategory, Junction, JunctionLink
+from app.models import Region, Authority, Road, RoadCategory, Junction, JunctionLink, TrafficCount
 import csv
 
 # Really simple CSV import to get going...
@@ -52,11 +52,11 @@ class ImportCommand(Command):
                         else:
                             rhs = junction_id
 
-                    link_id = self.create_link(lhs,rhs)
-                    self.create_counts(link_id, line)
+                    link_id = self.create_link(lhs,rhs,road_cat_id,authority_id)
+                    self.create_counts(link_id, line, row)
                 row = row + 1
 
-    def create_link(self, lhs, rhs):
+    def create_link(self, lhs, rhs, road_cat_id, authority_id):
         if lhs != None and rhs != None:
             # print("We have a right pair here... no really, it's correct.")
             link_obj = JunctionLink.find_or_create(lhs, rhs, road_cat_id, authority_id)
@@ -65,27 +65,31 @@ class ImportCommand(Command):
         else:
             raise Exception("Junction missing on row "+str(row)+".")
 
-    def create_counts(self, link_id, row):
-        year = int(row[0])
-        cp = int(row[1])
-        estimated = True
-        if row[2] == "Counted":
-            estimated = False
-        easting = int(row[8])
-        northing = int(row[9])
-        length_km = float(row[12])
-        pedal_cycles = int(row[14])
-        motor_cycles = int(row[15])
-        cars_taxis = int(row[16])
-        buses_coaches = int(row[17])
-        light_goods =  int(row[18])
-        v2_rigid_hgv = int(row[19])
-        v3_rigid_hgv = int(row[20])
-        v4_rigid_hgv = int(row[21])
-        v4_artic_hgv = int(row[22])
-        v5_artic_hgv = int(row[23])
-        v6_artic_hgv = int(row[24])
+    def create_counts(self, link_id, line, row):
+        newcount = {}
+        newcount["year"] = int(line[0])
+        newcount["cp"] = int(line[1])
+        newcount["estimated"] = True
+        if line[2] == "Counted":
+            newcount["estimated"] = False
+        newcount["link"] = link_id
+        newcount["easting"] = int(line[8])
+        newcount["northing"] = int(line[9])
+        newcount["length_km"] = float(line[12])
+        newcount["pedal_cycles"] = int(line[14])
+        newcount["motor_cycles"] = int(line[15])
+        newcount["cars_taxis"] = int(line[16])
+        newcount["buses_coaches"] = int(line[17])
+        newcount["light_goods"] =  int(line[18])
+        newcount["v2_rigid_hgv"] = int(line[19])
+        newcount["v3_rigid_hgv"] = int(line[20])
+        newcount["v4_rigid_hgv"] = int(line[21])
+        newcount["v4_artic_hgv"] = int(line[22])
+        newcount["v5_artic_hgv"] = int(line[23])
+        newcount["v6_artic_hgv"] = int(line[24])
         # 25 = ALL HGV, 26 = ALL VEHICLE
-
         # and insert
+        newc = TrafficCount.create_from_dict(newcount)
+        if newc == None:
+            raise Exception("Error importing row "+str(row)+".")
 

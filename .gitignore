@@ -82,7 +82,7 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-# diabled just for city science... .env
+.env
 .venv
 env/
 venv/
