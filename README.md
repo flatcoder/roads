@@ -10,32 +10,32 @@ http://flatcoder.co.uk:5101/
 
 ### API Endpoints:
 
-http://flatcoder.co.uk:5101/regions
-http://flatcoder.co.uk:5101/authorities
-http://flatcoder.co.uk:5101/roads
-http://flatcoder.co.uk:5101/junctions
-http://flatcoder.co.uk:5101/categories
-http://flatcoder.co.uk:5101/links
-http://flatcoder.co.uk:5101/counts
+	http://flatcoder.co.uk:5101/regions
+	http://flatcoder.co.uk:5101/authorities
+	http://flatcoder.co.uk:5101/roads
+	http://flatcoder.co.uk:5101/junctions
+	http://flatcoder.co.uk:5101/categories
+	http://flatcoder.co.uk:5101/links
+	http://flatcoder.co.uk:5101/counts
 
 All endpoints ALL support an optional "perpage" and "page" paramater.  E.g.:
 
-http://flatcoder.co.uk:5101/counts?perpage=5
-http://flatcoder.co.uk:5101/counts?perpage=5&page=1
+	http://flatcoder.co.uk:5101/counts?perpage=5
+	http://flatcoder.co.uk:5101/counts?perpage=5&page=1
 
 Traffic counts support "order" and "order_by" for length and total count:
 
-http://flatcoder.co.uk:5101/counts?order_by=length&order=asc
-http://flatcoder.co.uk:5101/counts?order_by=total&order=desc
+	http://flatcoder.co.uk:5101/counts?order_by=length&order=asc
+	http://flatcoder.co.uk:5101/counts?order_by=total&order=desc
 
 Traffic counts support filtering on a specific CP
 
-http://flatcoder.co.uk:5101/counts?cp=10
+	http://flatcoder.co.uk:5101/counts?cp=10
 
 Combination examples:
 
-http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0
-http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0&cp=10
+	http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0
+	http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0&cp=10
 
 ## TECH STACK
 
