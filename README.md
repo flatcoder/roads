@@ -53,7 +53,7 @@ The simplest and quickest way is to use docker compose to fire up 2 containers (
 
 The (Flask dev) web server will be available locally via port 5101.  The (Postgres) database server can be reached via port 5532.  I chose to remap the default ports since you may, like I, already have a running instances of Postgres or Flask locally.
 
-Included is an "env.sample" file............ copied to .env vi Docker......................., for database credentials.  Normally this wouldn't be checked into version at all, but for the purposes here it simply sets the defaults on the container...................easy deploy.....................still demonstrates the separation of credentials.  For data persistence, note the commented "volumes" lines in docker.compose.yml that will keep data even if the container is destroyed.
+Included is an "env.sample" file you can copy to .env for ease of deployment.  Normally this wouldn't be checked into version at all, but for the purposes here it simply sets the defaults on the container. For data persistence, note the commented "volumes" lines in docker.compose.yml that will keep data even if the container is destroyed.
 
 If, for some reason, docker compose is not an option, it ought to be possible to fire up separate containers manually.  E.g.:
 
