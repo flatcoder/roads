@@ -30,12 +30,12 @@ Traffic counts support "order" and "order_by" for length and total count:
 
 Traffic counts support filtering on a specific CP
 
-	http://flatcoder.co.uk:5101/counts?cp=10
+	http://flatcoder.co.uk:5101/counts?cp=6023
 
 Combination examples:
 
 	http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0
-	http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0&cp=10
+	http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0&cp=6023
 
 ## TECH STACK
 
