@@ -1,14 +1,14 @@
-#DEVOPS PYTHON/JS CODING CHALLENGE
+# DEVOPS PYTHON/JS CODING CHALLENGE
 
 This project is a solution to a problem posed by a potential employer.  I noted their use of Flask so ventured into a bit of the unknown (normally end up in Django land tbh!) and this is the result.  It's a microservice API to some freely available traffic data, specifically this: http://api.dft.gov.uk/v3/trafficcounts/export/la/Devon.csv.
 
-#DEMOS
+## DEMOS
 
-Simple JS Client:
+### Simple JS Client:
 
 http://flatcoder.co.uk:5101/
 
-API Endpoints:
+### API Endpoints:
 
 http://flatcoder.co.uk:5101/regions
 http://flatcoder.co.uk:5101/authorities
@@ -37,15 +37,15 @@ Combination examples:
 http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0
 http://flatcoder.co.uk:5101/counts?order_by=total&order=desc&perpage=5&page=0&cp=10
 
-#TECH STACK
+## TECH STACK
 
 Python 3.7, Flask, Flask Script, Flask Migrate, Flask API, Jsonify, SQL Alchemy (currently using Postgres).
 
-#DEPLOYMENT OPTIONS
+## DEPLOYMENT OPTIONS
 
 Docker compose (recommended), pure Docker, Python virtual environment, Full local install (not recommended).
 
-#INSTALLATION
+## INSTALLATION
 
 The simplest and quickest way is to use docker compose to fire up 2 containers (DB and Web server).  From the project directory, simply run:
 
@@ -61,7 +61,7 @@ If, for some reason, docker compose is not an option, it ought to be possible to
 
 If Docker is not available at all, the project can still be run using a Python 3.7 virtual environment + pip install -r requirements.txt + database migration/import using the management interface described below.
 
-#MANAGEMENT INTERFACE & IMPORTER
+## MANAGEMENT INTERFACE & IMPORTER
 
 Provided by "manage.py".  Generally, no need to run any of the below if you're using Docker (as it's automated).  If you must, you'll likely need to use "docker exec" to jack into the Matrix.
 
@@ -72,7 +72,7 @@ Provided by "manage.py".  Generally, no need to run any of the below if you're u
 
 You can follow any command with "-?" to see help / options.
 
-#SOLUTION DISCUSSION
+## SOLUTION DISCUSSION
 
 Observations surrounding the provided data as follows:
 
@@ -94,10 +94,10 @@ Models were built and further considerations emerged in the process:
 
 The resulting database model in included in this repo (see schema.png):
 
-![alt text](https://github.com/flatcoder/cityscience/schema.png "Data Model")
+![alt text](https://github.com/flatcoder/cityscience/raw/master/schema.png "Data Model")
 
 NOTE: This is all currently using the Flask dev web server.  In production, look to Apache or Nginx.  Choose your poison, but know this... Microsoft IIS is deadly and it will probably kill you.
 
-#ENHANCEMENTS
+## ENHANCEMENTS
 
 A little more time could greatly extend the API, the hardwork is done.  Would be worth including some automated testing (Python unittest) and CI (perhaps Travis CI).  For now, however, I think there's enough to show the direction headed!  Oh, and it still irks me storing totals!  Peace. :)
