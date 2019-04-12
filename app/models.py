@@ -124,20 +124,20 @@ class Junction(ModelABC, db.Model):
 class JunctionLink(ModelABC, db.Model):
     __tablename__ = 'links'
 
+    cp = db.Column(db.Integer, nullable=False, unique=True)
     start_junction = db.Column(db.Integer, db.ForeignKey('junctions.id'))
     end_junction = db.Column(db.Integer, db.ForeignKey('junctions.id'))
     road_category = db.Column(db.Integer, db.ForeignKey('road_categories.id'))
     local_authority = db.Column(db.Integer, db.ForeignKey('authorities.id'))
 
     @classmethod
-    def find_or_create(cls, start_junction, end_junction, road_category, local_authority):
+    def find_or_create(cls, start_junction, end_junction, road_category, local_authority, cp):
         # Might seem overkill, but consider 2 roads that run from the same A to B...
-        rec = cls.query.filter_by(start_junction=start_junction, end_junction=end_junction,
-                                  road_category=road_category, local_authority=local_authority).first()
+        rec = cls.query.filter_by(cp=cp).first()
         if rec == None:
             print("Creating Junction Link '"+str(start_junction)+"' to '"+str(end_junction)+"'.")
             newlink = JunctionLink(start_junction=start_junction, end_junction=end_junction,
-                                   road_category=road_category, local_authority=local_authority)
+                                   road_category=road_category, local_authority=local_authority, cp=cp)
             db.session.add(newlink)
             db.session.commit()
             return newlink
@@ -148,12 +148,10 @@ class TrafficCount(ModelABC, db.Model):
     __tablename__ = 'traffic_counts'
 
     __table_args__ = (
-        db.UniqueConstraint('cp', 'year', name='cp_year_combo'),
+        db.UniqueConstraint('year', 'link', name='year_link_combo'),
     )
 
-    cp = db.Column(db.Integer, nullable=False)
     link = db.Column(db.Integer, db.ForeignKey('links.id'))
-
     year = db.Column(db.Integer, nullable=False)
     estimated = db.Column(db.Boolean, nullable=False, default=False)
     northing = db.Column(db.Integer, nullable=False)
@@ -185,7 +183,6 @@ class TrafficCount(ModelABC, db.Model):
                     newcount["cars_taxis"]+newcount["buses_coaches"]+newcount["light_goods"]
 
         newco = TrafficCount(
-                        cp=newcount["cp"],
                         link=newcount["link"],
                         year=newcount["year"],
                         estimated=newcount["estimated"],

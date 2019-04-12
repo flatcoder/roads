@@ -52,14 +52,15 @@ class ImportCommand(Command):
                         else:
                             rhs = junction_id
 
-                    link_id = self.create_link(lhs,rhs,road_cat_id,authority_id)
+                    cp = int(line[1])
+                    link_id = self.create_link(lhs,rhs,road_cat_id,authority_id,cp)
                     self.create_counts(link_id, line, row)
                 row = row + 1
 
-    def create_link(self, lhs, rhs, road_cat_id, authority_id):
+    def create_link(self, lhs, rhs, road_cat_id, authority_id,cp):
         if lhs != None and rhs != None:
             # print("We have a right pair here... no really, it's correct.")
-            link_obj = JunctionLink.find_or_create(lhs, rhs, road_cat_id, authority_id)
+            link_obj = JunctionLink.find_or_create(lhs, rhs, road_cat_id, authority_id,cp)
             # print(link_obj)
             return link_obj.id
         else:
@@ -68,7 +69,7 @@ class ImportCommand(Command):
     def create_counts(self, link_id, line, row):
         newcount = {}
         newcount["year"] = int(line[0])
-        newcount["cp"] = int(line[1])
+        #newcount["cp"] = int(line[1])
         newcount["estimated"] = True
         if line[2] == "Counted":
             newcount["estimated"] = False

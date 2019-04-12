@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>API Demo Page</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+  <script type = "text/javascript" src = "{{ url_for('static', filename='app.js') }}" ></script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="column" style="margin-top: 5%">
+   	    <h1>Basic Client Demo (JS)</h1>
+   	    <p>If you view the source, HTML aside, the client is all of 6 lines of Javascript in 'app.js' and 4 lines inline.</p>
+      	<input type="button" onclick="queryAPI('/regions');" value="Get Regions" />
+      	<input type="button" onclick="queryAPI('/authorities');" value="Get Authorities" />
+      	<input type="button" onclick="queryAPI('/categories');" value="Get Categories" />
+      	<input type="button" onclick="queryAPI('/roads');" value="Get Roads" />
+      	<input type="button" onclick="queryAPI('/junctions');" value="Get Junctions" />
+      	<input type="button" onclick="queryAPI('/links');" value="Get Links" />
+        <input type="button" onclick="queryAPI('/counts');" value="Get Counts" />
+	  	<input type="button" onclick="queryAPI('/counts?perpage=5&page=1');" value="Counts, limit 5, page 2" />
+	  	<input type="button" onclick="queryAPI('/counts?order_by=length&order=desc&perpage=10');" value="Counts, by length desc, limit 10" />
+	  	<input type="button" onclick="queryAPI('/counts?order_by=total&order=desc&perpage=100');" value="By count desc, limit 100" /><br/>
+	  	CP: &nbsp;<input type="text" value="6023" id='cp' />&nbsp;<input type="button" onclick="doParam('cp');" value="Get CPs" />&nbsp;
+      	<div style='width:100%;border:1px solid;height:400px;'>
+      	  <textarea id='results' style='width:100%;height:100%;'></textarea>
+      	</div>
+      	<script>
+      		function doParam(para) {
+      			let newv = document.getElementById(para).value;
+      			queryAPI('/counts?'+para+'='+newv);
+      		}
+      	</script>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

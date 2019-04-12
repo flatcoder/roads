@@ -4,4 +4,5 @@ ENV FLASK_ENV production
 RUN mkdir /code
 WORKDIR /code
 COPY . /code/
+RUN cp env.sample .env
 RUN pip install -r requirements.txt

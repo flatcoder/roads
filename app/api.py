@@ -61,43 +61,56 @@ class CountsAPI(TrafficAPI):
 
     def _search_filter_order(self, request, perpage, page):
         newq = None
+        link_id = 0
 
+        # Filter on a specific CP (junction pair)
+        if "cp" in request.args:
+            cp = int(request.args["cp"])
+            lnk = JunctionLink.query.filter_by(cp=cp).first()
+            if lnk != None:
+                link_id = lnk.id
+
+        # Order by length, total asc or desc
         if "order_by" in request.args:
             if "order" in request.args:
                 if request.args["order"] == "desc":
                     if request.args["order_by"] == "length":
-                        newq = self.model.query.filter().order_by(TrafficCount.length_km.desc())
+                        if link_id > 0:
+                            newq = self.model.query.filter_by(link=link_id).order_by(TrafficCount.length_km.desc())
+                        else:
+                            newq = self.model.query.filter().order_by(TrafficCount.length_km.desc())
                     else:
-                        newq = self.model.query.filter().order_by(TrafficCount.total_all.desc())
+                        if link_id > 0:
+                            newq = self.model.query.filter_by(link=link_id).order_by(TrafficCount.total_all.desc())
+                        else:
+                            newq = self.model.query.filter().order_by(TrafficCount.total_all.desc())
 
             if request.args["order_by"] == "length" and newq == None:
-                newq = self.model.query.filter().order_by(TrafficCount.length_km.asc())
+                if link_id > 0:
+                    newq = self.model.query.filter_by(link=link_id).order_by(TrafficCount.length_km.asc())
+                else:
+                    newq = self.model.query.filter().order_by(TrafficCount.length_km.asc())
             elif newq == None:
-                newq = self.model.query.filter().order_by(TrafficCount.total_all.asc())
+                if link_id > 0:
+                    newq = self.model.query.filter_by(link=link_id).order_by(TrafficCount.total_all.asc())
+                else:
+                    newq = self.model.query.filter().order_by(TrafficCount.total_all.asc())
 
+        # Limits and offsets
         if perpage > 0:
+            # Order applied?
             if newq == None:
                 return self.model.query.limit(perpage).offset(page*perpage)
             else:
                 return newq.limit(perpage).offset(page*perpage)
 
+        # Order applied?
         if newq != None:
-            return newq.filter()
+            if link_id > 0:
+                return newq.filter_by(link=link_id)
+            return newq.all()
 
-        # default
-        return self.model.query.filter()
-
-"""        lhs = 0
-        rhs = 0
-        road = 0
-
-        if "lhs_junction" in request.args:
-            lhs = int(request.args["lhs_junction"])
-
-        if "rhs_junction" in request.args:
-            rhs = int(request.args["rhs_junction"])
-
-        if "road" in request.args:
-            road = int(request.args["road"])
-"""
-
+        # CP set?
+        if link_id > 0:
+            return self.model.query.filter_by(link=link_id)
+        return self.model.query.all()

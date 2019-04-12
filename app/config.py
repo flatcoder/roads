@@ -16,7 +16,3 @@ app_config = {
     'development': Development,
     'production': Production,
 }
-
-# export FLASK_ENV=development
-# export DATABASE_URL= postgres://name:password@houst:port/blog_api_db
-# export JWT_SECRET_KEY = hhgaghhgsdhdhdd

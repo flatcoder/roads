@@ -1,5 +1,6 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
+from flask import render_template
 from app import create_app
 from app.importer import ImportCommand
 from app.models import db
@@ -14,8 +15,8 @@ manager.add_command('database', MigrateCommand)
 manager.add_command('import_csv', ImportCommand)
 
 @app.route('/')
-def home():
-    return 'CP API ENDPOINT'
+def demo():
+    return render_template('demo.html')
 
 if __name__ == '__main__':
     manager.run()
