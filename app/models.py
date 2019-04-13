@@ -5,7 +5,7 @@ from sqlalchemy_utils import aggregated
 db = SQLAlchemy()
 
 class ModelABC(object):
-	# 1st PK that's integer and not FK is autoincrement (Serial in postgres).
+    # 1st int PK that's not a FK is autoincrement (Serial in postgres).
     id = db.Column(db.Integer, primary_key=True)
 
     def serialize(self):
