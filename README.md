@@ -18,7 +18,7 @@ http://flatcoder.co.uk:5101/
 	http://flatcoder.co.uk:5101/links
 	http://flatcoder.co.uk:5101/counts
 
-All endpoints ALL support an optional "perpage" and "page" paramater.  E.g.:
+All endpoints support an optional "perpage" and "page" paramater.  E.g.:
 
 	http://flatcoder.co.uk:5101/counts?perpage=5
 	http://flatcoder.co.uk:5101/counts?perpage=5&page=1
@@ -92,7 +92,7 @@ Models were built and further considerations emerged in the process:
 
 - Currently, we *ARE* storing totals, but I'd revisit this especially if the data is not to stay READ ONLY or if much larger data sets are planned (this set is quite small really).  An aggregated column could be used (SQL Alchemy Utils), solving integrity issues, but not performance.  Triggers are an option, to address performance (read, not write), but are usually not database agnostic.  Again, worth a revisit this one.
 
-The resulting database model in included in this repo (see schema.png):
+The resulting database model is included in this repo (see schema.png):
 
 ![alt text](https://github.com/flatcoder/cityscience/raw/master/schema.png "Data Model")
 
