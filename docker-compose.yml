@@ -9,8 +9,8 @@ services:
       - POSTGRES_USER=${D_USER}
       - POSTGRES_PASSWORD=${D_PASSWORD}
       - POSTGRES_DB=${D_DB}
-    #volumes:
-    #  - ./pg-data:/var/lib/postgresql/data
+        #volumes:
+        #  - ./pg-data:/var/lib/postgresql/data
     ports:
       - "5532:5432"
   web:
@@ -20,8 +20,8 @@ services:
       - DATABASE_URL=${D_DATABASE_URL}
     # command = run on start-up, entrypoint = exclusive...
     entrypoint: ["./launch_server.sh"]
-    #volumes:
-    #  - .:/code
+    volumes:
+      - .:/code
     ports:
       - "5101:5000"
     depends_on:

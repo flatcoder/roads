@@ -4,6 +4,18 @@ from sqlalchemy_utils import aggregated
 
 db = SQLAlchemy()
 
+"""import json
+
+def dump_sqlalchemy(output_connection_string,output_schema):
+    engine = create_engine(f'{output_connection_string}{output_schema}')
+    meta = MetaData()
+    meta.reflect(bind=engine)  # http://docs.sqlalchemy.org/en/rel_0_9/core/reflection.html
+    result = {}
+    for table in meta.sorted_tables:
+        result[table.name] = [dict(row) for row in engine.execute(table.select())]
+    return json.dumps(result)
+"""
+
 class ModelABC(object):
     # 1st int PK that's not a FK is autoincrement (Serial in postgres).
     id = db.Column(db.Integer, primary_key=True)
@@ -25,9 +37,13 @@ class ModelABC(object):
         """ Static method, read-only, no instance, no class... """
         return [m.serialize() for m in l]
 
+    @staticmethod
+    def backup_database(filename):
+        return "ola cola"
+
 class Region(ModelABC, db.Model):
     __tablename__ = 'regions'
-    name = db.Column(db.String(80), unique=True, nullable=False)
+    name = db.Column(db.String(180), unique=True, nullable=False)
 
     @classmethod
     def find_or_create(cls, name):
@@ -49,7 +65,7 @@ class Authority(ModelABC, db.Model):
         db.UniqueConstraint('name', 'region', name='unique_authority_region_combo'),
     )
 
-    name = db.Column(db.String(80), nullable=False)
+    name = db.Column(db.String(180), nullable=False)
     region = db.Column(db.Integer, db.ForeignKey('regions.id'))
 
     @classmethod
@@ -68,7 +84,7 @@ class RoadCategory(ModelABC, db.Model):
     __tablename__ = 'road_categories'
 
     code = db.Column(db.String(8), unique=True, nullable=False)
-    description = db.Column(db.String(80), nullable=False, default="")
+    description = db.Column(db.String(180), nullable=False, default="")
 
     @classmethod
     def find_or_create(cls, code, description):
@@ -106,7 +122,7 @@ class Junction(ModelABC, db.Model):
         db.UniqueConstraint('road', 'name', name='unique_road_name_combo'),
     )
 
-    name = db.Column(db.String(80), nullable=False)
+    name = db.Column(db.String(180), nullable=False)
     road = db.Column(db.Integer, db.ForeignKey('roads.id'))
 
     @classmethod
@@ -172,15 +188,15 @@ class TrafficCount(ModelABC, db.Model):
     v5_artic_hgv = db.Column(db.Integer, nullable=False, default=0)
     v6_artic_hgv = db.Column(db.Integer, nullable=False, default=0)
 
-    total_hgv = db.Column(db.Integer, nullable=False, default=0)
-    total_all = db.Column(db.Integer, nullable=False, default=0)
+    #total_hgv = db.Column(db.Integer, nullable=False, default=0)
+    #total_all = db.Column(db.Integer, nullable=False, default=0)
 
     @classmethod
     def create_from_dict(cls, newcount):
-        total_hgv = newcount["v2_rigid_hgv"]+newcount["v3_rigid_hgv"]+newcount["v4_rigid_hgv"]+ \
-                    newcount["v4_artic_hgv"]+newcount["v5_artic_hgv"]+newcount["v6_artic_hgv"]
-        total_all = total_hgv+newcount["pedal_cycles"]+newcount["motor_cycles"]+ \
-                    newcount["cars_taxis"]+newcount["buses_coaches"]+newcount["light_goods"]
+        #total_hgv = newcount["v2_rigid_hgv"]+newcount["v3_rigid_hgv"]+newcount["v4_rigid_hgv"]+ \
+        #            newcount["v4_artic_hgv"]+newcount["v5_artic_hgv"]+newcount["v6_artic_hgv"]
+        #total_all = total_hgv+newcount["pedal_cycles"]+newcount["motor_cycles"]+ \
+        #            newcount["cars_taxis"]+newcount["buses_coaches"]+newcount["light_goods"]
 
         newco = TrafficCount(
                         link=newcount["link"],
@@ -198,9 +214,9 @@ class TrafficCount(ModelABC, db.Model):
                         v4_rigid_hgv=newcount["v4_rigid_hgv"],
                         v4_artic_hgv=newcount["v4_artic_hgv"],
                         v5_artic_hgv=newcount["v5_artic_hgv"],
-                        v6_artic_hgv=newcount["v6_artic_hgv"],
-                        total_hgv=total_hgv,
-                        total_all=total_all
+                        v6_artic_hgv=newcount["v6_artic_hgv"]
+                        #total_hgv=total_hgv,
+                        #total_all=total_all
                     )
         try:
             db.session.add(newco)

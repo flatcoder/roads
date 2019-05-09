@@ -71,7 +71,7 @@ class CountsAPI(TrafficAPI):
                 link_id = lnk.id
 
         # Order by length, total asc or desc
-        if "order_by" in request.args:
+        """if "order_by" in request.args:
             if "order" in request.args:
                 if request.args["order"] == "desc":
                     if request.args["order_by"] == "length":
@@ -94,7 +94,7 @@ class CountsAPI(TrafficAPI):
                 if link_id > 0:
                     newq = self.model.query.filter_by(link=link_id).order_by(TrafficCount.total_all.asc())
                 else:
-                    newq = self.model.query.filter().order_by(TrafficCount.total_all.asc())
+                    newq = self.model.query.filter().order_by(TrafficCount.total_all.asc())"""
 
         # Limits and offsets
         if perpage > 0:

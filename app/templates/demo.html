@@ -10,13 +10,91 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
   <script type = "text/javascript" src = "{{ url_for('static', filename='app.js') }}" ></script>
+
+  <!-- Download OpenSpace API using your key -->
+<script type="text/javascript" src="https://openspace.ordnancesurvey.co.uk/osmapapi/openspace.js?key=874C5F8149C46DCBE0530B6CA40A40B4"></script>
+<script type= "text/javascript" src="https://openspace.ordnancesurvey.co.uk/osmapapi/script/mapbuilder/basicmap.js"></script>
+<script type= "text/javascript" src="https://openspace.ordnancesurvey.co.uk/osmapapi/script/mapbuilder/searchbox.js"></script>
+
+<script type="text/javascript">
+//declare marker variables
+var pos, size, offset, infoWindowAnchor, icon, content, popUpSize;
+
+//variables for routes
+var linesLayer, points, lineFeature, lineString, routeMarkersLayer, routepos, routesize, routeoffset, routeicon;
+var style_blue = {strokeColor: "#0000CD", strokeOpacity: 0.5, strokeWidth: 4.5};
+
+function initmapbuilder()
+{
+//initiate the map
+var options = {resolutions: [2500, 1000, 500, 200, 100, 50, 25, 10, 5, 4, 2.5, 2, 1]};
+osMap = new OpenSpace.Map('map', options);
+
+//configure map options (basicmap.js)
+setglobaloptions();
+// add a box displaying co-ordinates (mouse over map to display)
+makegrid()
+//display an overview map
+mapOV.maximizeControl();
+
+//add a postcode/gazetteer search box (see searchbox.js)
+addSearchBox(1);
+//set the center of the map and the zoom level
+osMap.setCenter(new OpenSpace.MapPoint(414350,297010),1);
+// add a marker
+pos = new OpenSpace.MapPoint(385350,398010);
+size = new OpenLayers.Size(33,45);
+offset = new OpenLayers.Pixel(-16,-36);
+infoWindowAnchor = new OpenLayers.Pixel(16,16);
+icon = new OpenSpace.Icon('https://openspace.ordnancesurvey.co.uk/osmapapi/img_versions/img_1.0.1/OS/images/markers/marker_red.png', size, offset, null, infoWindowAnchor);
+osMap.createMarker(pos, icon, null, null);
+linesLayer = osMap.getVectorLayer();
+// Set up layer for route markers
+routeMarkersLayer = new OpenLayers.Layer.Markers("Route Markers");
+//make a route
+points = new Array();
+points.push(new OpenLayers.Geometry.Point(434350,335010));
+points.push(new OpenLayers.Geometry.Point(456350,342010));
+points.push(new OpenLayers.Geometry.Point(457350,343010));
+// create a polyline feature from the array of points
+lineString = new OpenLayers.Geometry.LineString(points);
+lineFeature = new OpenLayers.Feature.Vector(lineString, null, style_blue);
+linesLayer.addFeatures([lineFeature]);
+//crate a route start/end marker
+routepos = new OpenSpace.MapPoint(434350,335010);
+routesize = new OpenLayers.Size(33,45);
+routeoffset = new OpenLayers.Pixel(-5,-37);
+routeicon = new OpenSpace.Icon('https://openspace.ordnancesurvey.co.uk/osmapapi/img_versions/img_1.1/mapbuilder/routemarker-start.png', routesize, routeoffset, null, null);
+routeMarkersLayer.addMarker(new OpenLayers.Marker(routepos, routeicon));
+//crate a route start/end marker
+routepos = new OpenSpace.MapPoint(457350,343010);
+routesize = new OpenLayers.Size(33,45);
+routeoffset = new OpenLayers.Pixel(-5,-37);
+routeicon = new OpenSpace.Icon('https://openspace.ordnancesurvey.co.uk/osmapapi/img_versions/img_1.1/mapbuilder/routemarker-end.png', routesize, routeoffset, null, null);
+routeMarkersLayer.addMarker(new OpenLayers.Marker(routepos, routeicon));
+osMap.addLayer(routeMarkersLayer);}
+</script>
+
 </head>
-<body>
+<body onload="initmapbuilder()">
   <div class="container">
     <div class="row">
       <div class="column" style="margin-top: 5%">
    	    <h1>Basic Client Demo (JS)</h1>
-   	    <p>If you view the source, HTML aside, the client is all of 6 lines of Javascript in 'app.js' and 4 lines inline.</p>
+   	    <p>If you view the source, HTML aside, the client is all of 6 lines of Javascript in 'app.js' and 4 lines inline.
+
+
+
+Basic:
+  Roads popular with motorcyclists
+  Roads popular with cyclists
+  Roads not suitable for HGV
+  Roads not suitable for LGV
+  Roads and traffic (advanced)
+    Advanced = Roads with MOST/LEAST and vehicle selections
+
+
+        </p>
       	<input type="button" onclick="queryAPI('/regions');" value="Get Regions" />
       	<input type="button" onclick="queryAPI('/authorities');" value="Get Authorities" />
       	<input type="button" onclick="queryAPI('/categories');" value="Get Categories" />
@@ -37,6 +115,9 @@
       			queryAPI('/counts?'+para+'='+newv);
       		}
       	</script>
+
+<div id="map" style="border: 1px solid black; width:540px; height:440px;"></div>
+
       </div>
     </div>
   </div>
